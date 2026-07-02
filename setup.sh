@@ -3,21 +3,46 @@
 # noisy skills into cold storage. Pretty when gum is around, still works without.
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_URL="${COOL_MY_SKILLS_REPO:-https://github.com/pc-style/cool-my-skills}"
+
+has() { command -v "$1" >/dev/null 2>&1; }
+
+# Where is this script? When piped (curl | bash) BASH_SOURCE is not a real path.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
 SRC_SKILL="$SCRIPT_DIR/skills/search-cold-skills"
+
+# ---- bootstrap: piped with no checkout -> clone ourselves, then re-run -------
+if [ ! -d "$SRC_SKILL" ]; then
+  has git || { printf 'git is required to bootstrap. install git and retry.\n' >&2; exit 1; }
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  printf 'fetching cool-my-skills...\n'
+  git clone --depth 1 "$REPO_URL" "$tmp/repo" >/dev/null 2>&1 \
+    || { printf 'could not clone %s\n' "$REPO_URL" >&2; exit 1; }
+  bash "$tmp/repo/setup.sh"
+  exit $?
+fi
 
 HOT_DIR="${HOT_SKILLS_DIR:-$HOME/.agents/skills}"
 COLD_DIR="${COLD_SKILLS_DIR:-$HOME/.agents/skills-cold}"
 DEST_SKILL="$HOT_DIR/search-cold-skills"
 
-has() { command -v "$1" >/dev/null 2>&1; }
-is_interactive() { [ -t 0 ] && [ -t 1 ] && [ "${CI:-}" != "true" ]; }
+# Read from the terminal even when stdin is a pipe (curl | bash).
+TTY="/dev/tty"
+have_tty() { [ -r "$TTY" ] && [ -w "$TTY" ]; }
+is_interactive() { [ "${CI:-}" != "true" ] && have_tty; }
+ask() { # ask "prompt" -> echoes the reply
+  local reply=""
+  printf '%s' "$1" > "$TTY"
+  IFS= read -r reply < "$TTY" || true
+  printf '%s' "$reply"
+}
 
 # ---- gum, with a soft offer to install it ------------------------------------
 if ! has gum && is_interactive && has brew; then
-  printf 'gum makes this nicer. install it with homebrew? [y/N] '
-  read -r reply
-  case "$reply" in [yY]*) brew install gum || true ;; esac
+  case "$(ask 'gum makes this nicer. install it with homebrew? [y/N] ')" in
+    [yY]*) brew install gum || true ;;
+  esac
 fi
 
 # ---- output helpers (gum if present, plain otherwise) ------------------------
@@ -38,7 +63,7 @@ confirm() { # confirm "question"  -> 0 yes / 1 no
   if has gum && is_interactive; then
     gum confirm "$q"
   elif is_interactive; then
-    printf '%s [y/N] ' "$q"; read -r r; case "$r" in [yY]*) return 0 ;; *) return 1 ;; esac
+    case "$(ask "$q [y/N] ")" in [yY]*) return 0 ;; *) return 1 ;; esac
   else
     return 1
   fi
@@ -104,8 +129,7 @@ if has gum && is_interactive; then
 else
   printf 'skills you can cool:\n'
   printf '  - %s\n' "${candidates[@]}"
-  printf 'type space-separated names to cool (blank to skip): '
-  read -r chosen
+  chosen="$(ask 'type space-separated names to cool (blank to skip): ')"
   chosen="${chosen// /$'\n'}"
 fi
 
