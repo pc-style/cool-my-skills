@@ -4,6 +4,7 @@
 set -euo pipefail
 
 REPO_URL="${COOL_MY_SKILLS_REPO:-https://github.com/pc-style/cool-my-skills}"
+TARBALL_URL="${COOL_MY_SKILLS_TARBALL:-https://codeload.github.com/pc-style/cool-my-skills/tar.gz/refs/heads/main}"
 
 has() { command -v "$1" >/dev/null 2>&1; }
 
@@ -23,15 +24,17 @@ done
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
 SRC_SKILL="$SCRIPT_DIR/skills/search-cold-skills"
 
-# ---- bootstrap: piped with no checkout -> clone ourselves, then re-run -------
+# ---- bootstrap: piped with no checkout -> fetch ourselves, then re-run -------
 if [ ! -d "$SRC_SKILL" ]; then
-  has git || { printf 'git is required to bootstrap. install git and retry.\n' >&2; exit 1; }
+  has curl || { printf 'curl is required to bootstrap. install curl and retry.\n' >&2; exit 1; }
+  has tar || { printf 'tar is required to bootstrap. install tar and retry.\n' >&2; exit 1; }
   tmp="$(mktemp -d)"
   trap 'rm -rf "$tmp"' EXIT
   printf 'fetching cool-my-skills...\n'
-  git clone --depth 1 "$REPO_URL" "$tmp/repo" >/dev/null 2>&1 \
-    || { printf 'could not clone %s\n' "$REPO_URL" >&2; exit 1; }
-  bash "$tmp/repo/setup.sh" "$@"
+  curl -fsSL "$TARBALL_URL?cache_bust=$(date +%s)" | tar -xz -C "$tmp" \
+    || { printf 'could not fetch %s\n' "$REPO_URL" >&2; exit 1; }
+  repo_dir="$(find "$tmp" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+  bash "$repo_dir/setup.sh" "$@"
   exit $?
 fi
 
