@@ -8,7 +8,13 @@ this repo installs that one hot skill (`search-cold-skills`) and gives you a set
 
 ## install
 
-full experience (installs the skill, then lets you cool some skills right away):
+full experience, one line (installs the skill, then lets you cool some skills right away):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.sh | bash
+```
+
+the script clones itself and reads your answers from the terminal, so the picker still works through the pipe. if you'd rather see the code first, clone it:
 
 ```bash
 git clone https://github.com/pc-style/cool-my-skills
