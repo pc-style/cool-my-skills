@@ -7,6 +7,18 @@ REPO_URL="${COOL_MY_SKILLS_REPO:-https://github.com/pc-style/cool-my-skills}"
 
 has() { command -v "$1" >/dev/null 2>&1; }
 
+# ---- flags ------------------------------------------------------------------
+DRY_RUN=0
+for a in "$@"; do
+  case "$a" in
+    --dry-run|-n) DRY_RUN=1 ;;
+    -h|--help)
+      printf 'usage: setup.sh [--dry-run]\n'
+      printf '  --dry-run, -n   show the whole flow (banner, prompts, picker) without touching disk\n'
+      exit 0 ;;
+  esac
+done
+
 # Where is this script? When piped (curl | bash) BASH_SOURCE is not a real path.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
 SRC_SKILL="$SCRIPT_DIR/skills/search-cold-skills"
@@ -19,7 +31,7 @@ if [ ! -d "$SRC_SKILL" ]; then
   printf 'fetching cool-my-skills...\n'
   git clone --depth 1 "$REPO_URL" "$tmp/repo" >/dev/null 2>&1 \
     || { printf 'could not clone %s\n' "$REPO_URL" >&2; exit 1; }
-  bash "$tmp/repo/setup.sh"
+  bash "$tmp/repo/setup.sh" "$@"
   exit $?
 fi
 
@@ -57,6 +69,9 @@ banner() {
 say()  { if has gum; then gum style --foreground 244 "$1"; else printf '%s\n' "$1"; fi; }
 step() { if has gum; then gum log --level info "$1"; else printf 'info: %s\n' "$1"; fi; }
 ok()   { if has gum; then gum style --foreground 42 --bold "$1"; else printf '%s\n' "$1"; fi; }
+dry()  { # dry "message"  -> yellow "would ..." note, only in dry-run
+  if has gum; then gum log --level warn "$1"; else printf 'dry-run: %s\n' "$1"; fi
+}
 
 confirm() { # confirm "question"  -> 0 yes / 1 no
   local q="$1"
@@ -70,7 +85,8 @@ confirm() { # confirm "question"  -> 0 yes / 1 no
 }
 
 # ---- the pitch --------------------------------------------------------------
-banner "cool-my-skills"
+if [ "$DRY_RUN" = 1 ]; then banner "cool-my-skills (dry run)"; else banner "cool-my-skills"; fi
+[ "$DRY_RUN" = 1 ] && dry "dry run: showing the whole flow, nothing on disk gets touched."
 say "every skill you install adds a tripwire. its description gets checked on"
 say "every single message, so a big pile of skills is a big pile of chances to"
 say "misfire on something you never asked for."
@@ -86,19 +102,25 @@ say "just silent. being aggressive mostly just makes things annoying to find."
 printf '\n'
 
 # ---- install the hot search skill -------------------------------------------
-step "creating $COLD_DIR"
-mkdir -p "$COLD_DIR" "$HOT_DIR"
+if [ "$DRY_RUN" = 1 ]; then
+  dry "would create $COLD_DIR"
+  dry "would install search-cold-skills into $HOT_DIR"
+  dry "would strip the not-installed warning from the installed SKILL.md"
+else
+  step "creating $COLD_DIR"
+  mkdir -p "$COLD_DIR" "$HOT_DIR"
 
-step "installing search-cold-skills into $HOT_DIR"
-mkdir -p "$DEST_SKILL/scripts"
-cp "$SRC_SKILL/SKILL.md" "$DEST_SKILL/SKILL.md"
-cp "$SRC_SKILL/scripts/query.sh" "$DEST_SKILL/scripts/query.sh"
-cp "$SRC_SKILL/scripts/install.sh" "$DEST_SKILL/scripts/install.sh"
-chmod +x "$DEST_SKILL/scripts/query.sh" "$DEST_SKILL/scripts/install.sh"
+  step "installing search-cold-skills into $HOT_DIR"
+  mkdir -p "$DEST_SKILL/scripts"
+  cp "$SRC_SKILL/SKILL.md" "$DEST_SKILL/SKILL.md"
+  cp "$SRC_SKILL/scripts/query.sh" "$DEST_SKILL/scripts/query.sh"
+  cp "$SRC_SKILL/scripts/install.sh" "$DEST_SKILL/scripts/install.sh"
+  chmod +x "$DEST_SKILL/scripts/query.sh" "$DEST_SKILL/scripts/install.sh"
 
-# finish setup: create cold dir + strip the not-installed warning
-step "finishing skill setup"
-COLD_SKILLS_DIR="$COLD_DIR" bash "$DEST_SKILL/scripts/install.sh" >/dev/null
+  # finish setup: create cold dir + strip the not-installed warning
+  step "finishing skill setup"
+  COLD_SKILLS_DIR="$COLD_DIR" bash "$DEST_SKILL/scripts/install.sh" >/dev/null
+fi
 
 # ---- offer to cool some skills now ------------------------------------------
 candidates=()
@@ -146,11 +168,19 @@ while IFS= read -r name; do
   dst="$COLD_DIR/$name"
   if [ ! -d "$src" ]; then step "skip: $name (not found)"; continue; fi
   if [ -e "$dst" ]; then step "skip: $name (already in cold storage)"; continue; fi
-  mv "$src" "$dst"
-  step "cooled: $name"
+  if [ "$DRY_RUN" = 1 ]; then
+    dry "would cool: $name  ($src -> $dst)"
+  else
+    mv "$src" "$dst"
+    step "cooled: $name"
+  fi
   moved=$((moved + 1))
 done <<< "$chosen"
 
 printf '\n'
-ok "done. cooled $moved skill(s)."
-say "they no longer auto-trigger. reach them with:  cold <name or query>"
+if [ "$DRY_RUN" = 1 ]; then
+  ok "dry run done. would have cooled $moved skill(s). nothing was moved."
+else
+  ok "done. cooled $moved skill(s)."
+  say "they no longer auto-trigger. reach them with:  cold <name or query>"
+fi

@@ -22,6 +22,12 @@ cd cool-my-skills
 bash setup.sh
 ```
 
+want to see the whole thing (banner, prompts, picker) without touching anything? pass `--dry-run`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.sh | bash -s -- --dry-run
+```
+
 or grab just the skill through the skills cli:
 
 ```bash
