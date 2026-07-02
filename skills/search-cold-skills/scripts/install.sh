@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# install.sh — embedded, non-interactive finisher for the search-cold-skills skill.
+# install.sh — embedded finisher for the search-cold-skills skill.
 #
 # This runs when the skill was dropped in by a copy-only installer (e.g.
 # `npx skills add`) that does not create the cold-storage directory or strip the
-# "not installed yet" warning. It asks nothing and only does two things:
+# "not installed yet" warning. Agents should explain this first and ask the user
+# before running it. It only does these things:
 #   1. create ~/.agents/skills-cold/
 #   2. remove the NOT-INSTALLED warning block from this skill's SKILL.md
+#   3. make scripts/query.sh executable
 #
 # For the full interactive experience (moving skills into cold storage), run the
 # repo's setup.sh instead.

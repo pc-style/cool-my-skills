@@ -40,6 +40,8 @@ heads up: `npx skills` only copies files. it doesn't make `~/.agents/skills-cold
 bash ~/.agents/skills/search-cold-skills/scripts/install.sh
 ```
 
+if an agent sees that warning, it should stop, tell you the skill is only copied (not installed), explain exactly what that script does, and ask before running it. after it finishes, it should ask if you want to call any cold skills now.
+
 ## what setup.sh does
 
 - creates `~/.agents/skills-cold/`

@@ -5,26 +5,29 @@ description: Use when the user says "cold <skill-name or query>" (e.g. "cold to-
 
 <!-- COOL-MY-SKILLS:NOT-INSTALLED:START -->
 > [!WARNING]
-> **cool-my-skills is not set up on this machine yet.**
+> **cool-my-skills has been copied here, but it has not been installed.**
 >
-> This skill needs the cold-storage directory `~/.agents/skills-cold/` to exist
-> before it can find anything. It probably got dropped here by a copy-only
-> installer (e.g. `npx skills add`), which does not create that directory or run
-> any setup.
+> This usually happens after a copy-only install such as `npx skills add`.
+> That copies this skill, but it does not create `~/.agents/skills-cold/` or
+> finish initialization.
 >
-> **Do not try to search cold skills yet.** First run the embedded installer,
-> which lives next to this file:
+> **Do not search cold skills yet.** Tell the user it is not installed, then ask
+> if they want to run this embedded initialization script:
 >
 > ```bash
 > bash "$(dirname "$0")/scripts/install.sh"   # or, from this skill's dir:
 > bash scripts/install.sh
 > ```
 >
-> It creates `~/.agents/skills-cold/` and removes this warning. It asks nothing
-> and touches nothing else. Once it finishes, re-read this SKILL.md and proceed.
+> Before asking, explain that the script will only:
 >
-> For the full experience (moving your noisy skills into cold storage
-> interactively), run `setup.sh` from the cool-my-skills repo instead.
+> - create `~/.agents/skills-cold/`
+> - remove this warning from this copied `SKILL.md`
+> - make `scripts/query.sh` executable
+>
+> After the user agrees and the script completes, ask whether they want to call
+> any cold skills now. If they want the interactive picker for moving existing
+> skills into cold storage, tell them to run the repo's `setup.sh` instead.
 <!-- COOL-MY-SKILLS:NOT-INSTALLED:END -->
 
 # Search Cold Skills
