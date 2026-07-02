@@ -88,19 +88,18 @@ confirm() { # confirm "question"  -> 0 yes / 1 no
 # ---- the pitch --------------------------------------------------------------
 if [ "$DRY_RUN" = 1 ]; then banner "cool-my-skills (dry run)"; else banner "cool-my-skills"; fi
 [ "$DRY_RUN" = 1 ] && dry "dry run: showing the whole flow, nothing on disk gets touched."
-say "every skill you install adds a tripwire. its description gets checked on"
-say "every single message, so a big pile of skills is a big pile of chances to"
-say "misfire on something you never asked for."
+say "cold skills are skills kept outside the auto-scanned skills dir."
+say "they stay silent until you explicitly call them with: cold <name>"
 printf '\n'
-say "cold skills fix that. a cold skill just agreed to shut up until spoken to."
-say "it lives in ~/.agents/skills-cold, outside the dir your agent auto-scans,"
-say "so its metadata never loads. you summon it on demand with 'cold <name>'."
+say "This installer will create ~/.agents/skills-cold, install one hot search"
+say "skill, then optionally let you move a few noisy skills into cold storage."
+say "Don't move everything. two or three loud skills is usually enough."
 printf '\n'
-say "you don't need to go hard here. moving two or three of your loudest,"
-say "rarely-right skills into cold storage already buys back a lot of quiet."
-say "keep the always-on set small and sharp. everything else stays reachable,"
-say "just silent. being aggressive mostly just makes things annoying to find."
-printf '\n'
+
+if ! confirm "install search-cold-skills now?"; then
+  ok "cancelled. nothing installed."
+  exit 0
+fi
 
 # ---- install the hot search skill -------------------------------------------
 if [ "$DRY_RUN" = 1 ]; then
