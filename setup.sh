@@ -41,7 +41,9 @@ DEST_SKILL="$HOT_DIR/search-cold-skills"
 
 # Read from the terminal even when stdin is a pipe (curl | bash).
 TTY="/dev/tty"
-have_tty() { [ -r "$TTY" ] && [ -w "$TTY" ]; }
+# Actually try to open /dev/tty rather than trusting file-test bits; some
+# environments expose the node but can't open it.
+have_tty() { ( exec 3<>"$TTY" ) 2>/dev/null; }
 is_interactive() { [ "${CI:-}" != "true" ] && have_tty; }
 ask() { # ask "prompt" -> echoes the reply
   local reply=""
@@ -75,12 +77,11 @@ dry()  { # dry "message"  -> yellow "would ..." note, only in dry-run
 
 confirm() { # confirm "question"  -> 0 yes / 1 no
   local q="$1"
-  if has gum && is_interactive; then
-    gum confirm "$q"
-  elif is_interactive; then
-    case "$(ask "$q [y/N] ")" in [yY]*) return 0 ;; *) return 1 ;; esac
+  if ! is_interactive; then return 1; fi
+  if has gum; then
+    gum confirm "$q" < "$TTY"
   else
-    return 1
+    case "$(ask "$q [y/N] ")" in [yY]*) return 0 ;; *) return 1 ;; esac
   fi
 }
 
@@ -143,11 +144,11 @@ if ! confirm "do you want to cool some skills now?"; then
   exit 0
 fi
 
-# pick which ones to move
+# pick which ones to move. pass items as args so stdin stays free for the tty.
 if has gum && is_interactive; then
-  chosen="$(printf '%s\n' "${candidates[@]}" \
-    | gum choose --no-limit --height 20 \
-        --header 'space to select, enter to confirm (pick a few, not all):' || true)"
+  chosen="$(gum choose --no-limit --height 20 \
+      --header 'space to select, enter to confirm (pick a few, not all):' \
+      "${candidates[@]}" < "$TTY" || true)"
 else
   printf 'skills you can cool:\n'
   printf '  - %s\n' "${candidates[@]}"
