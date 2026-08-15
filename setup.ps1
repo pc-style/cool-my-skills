@@ -18,6 +18,12 @@ if ($Help) {
   exit 0
 }
 
+if ($args.Count -gt 0) {
+  Write-Error "unrecognized argument(s): $($args -join ' ')"
+  Write-Host 'usage: pwsh setup.ps1 [-DryRun]'
+  exit 2
+}
+
 # Where is this script? When piped (irm | iex) $PSScriptRoot is empty.
 $ScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
 $SrcSkill  = Join-Path $ScriptDir 'skills\search-cold-skills'
