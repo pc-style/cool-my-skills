@@ -175,7 +175,7 @@ foreach ($name in $selected) {
   if ($DryRun) {
     Write-Dry "would cool: $name  ($src -> $dst)"
   } else {
-    Move-Item -LiteralPath $src -Destination $dst
+    Move-Item -LiteralPath $src -Destination $dst -ErrorAction Stop
     Write-Step "cooled: $name"
   }
   $moved++
