@@ -9,6 +9,10 @@ param(
   [switch]$Help
 )
 
+# bash parity: setup.sh --dry-run / --help land in $args, not the switches.
+if ($args -contains '--dry-run') { $DryRun = $true }
+if ($args -contains '--help')    { $Help = $true }
+
 $RepoUrl    = $env:COOL_MY_SKILLS_REPO    ?? 'https://github.com/pc-style/cool-my-skills'
 $TarballUrl = $env:COOL_MY_SKILLS_TARBALL ?? 'https://codeload.github.com/pc-style/cool-my-skills/tar.gz/refs/heads/main'
 
