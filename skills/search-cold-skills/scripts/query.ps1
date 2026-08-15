@@ -46,7 +46,7 @@ $hyphenated = $Query -replace ' ', '-'
 if ($hyphenated -ne $Query) { $pattern += '|' + [regex]::Escape($hyphenated) }
 foreach ($w in $Query -split ' ') {
   if (-not $w) { continue }
-  $stem = [regex]::Replace($w, '(ist|ing|ed|es|s)$', '', 1)
+  $stem = [regex]::Replace($w, '(ist|ing|ed|es|s)$', '')
   if ($stem.Length -ge 3) { $pattern += '|' + [regex]::Escape($stem) }
 }
 
