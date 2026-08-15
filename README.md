@@ -10,11 +10,19 @@ this repo installs that one hot skill (`search-cold-skills`) and gives you a set
 
 full experience, one line (installs the skill, then lets you cool some skills right away):
 
+mac / linux:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.sh | bash
 ```
 
-the script clones itself and reads your answers from the terminal, so the picker still works through the pipe. if you'd rather see the code first, clone it:
+windows (powershell 7+):
+
+```powershell
+irm https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.ps1 | iex
+```
+
+the scripts clone themselves and read your answers from the terminal, so the picker still works through the pipe. if you'd rather see the code first, clone it:
 
 ```bash
 git clone https://github.com/pc-style/cool-my-skills
@@ -22,10 +30,22 @@ cd cool-my-skills
 bash setup.sh
 ```
 
-want to see the whole thing (banner, prompts, picker) without touching anything? pass `--dry-run`:
+on windows:
+
+```powershell
+git clone https://github.com/pc-style/cool-my-skills
+cd cool-my-skills
+pwsh -ExecutionPolicy Bypass -File setup.ps1
+```
+
+want to see the whole thing (banner, prompts, picker) without touching anything? pass `--dry-run` (`-DryRun` on windows):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.sh | bash -s -- --dry-run
+```
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.ps1))) -DryRun
 ```
 
 or grab just the skill through the skills cli:
@@ -40,16 +60,22 @@ heads up: `npx skills` only copies files. it doesn't make `~/.agents/skills-cold
 bash ~/.agents/skills/search-cold-skills/scripts/install.sh
 ```
 
+or on windows:
+
+```powershell
+pwsh "$env:USERPROFILE\.agents\skills\search-cold-skills\scripts\install.ps1"
+```
+
 if an agent sees that warning, it should stop, tell you the skill is only copied (not installed), explain exactly what that script does, and ask before running it. after it finishes, it should ask if you want to call any cold skills now.
 
-## what setup.sh does
+## what setup.sh / setup.ps1 does
 
 - creates `~/.agents/skills-cold/`
 - installs `search-cold-skills` into `~/.agents/skills/`
 - strips the not-installed warning
 - asks "do you want to cool some skills now?" and lets you pick from your own skills
 
-it's built with [gum](https://github.com/charmbracelet/gum) when you have it, and falls back to plain prompts when you don't.
+it's built with [gum](https://github.com/charmbracelet/gum) when you have it, and falls back to plain prompts when you don't. `setup.ps1` skips gum and uses plain prompts throughout.
 
 ## the idea
 

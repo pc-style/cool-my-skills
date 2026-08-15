@@ -19,15 +19,23 @@ description: Use when the user says "cold <skill-name or query>" (e.g. "cold to-
 > bash scripts/install.sh
 > ```
 >
+> On Windows (PowerShell 7+), run it with:
+>
+> ```powershell
+> pwsh "$HOME\.agents\skills\search-cold-skills\scripts\install.ps1"
+> # or, from this skill's dir: pwsh .\scripts\install.ps1
+> ```
+>
 > Before asking, explain that the script will only:
 >
 > - create `~/.agents/skills-cold/`
 > - remove this warning from this copied `SKILL.md`
-> - make `scripts/query.sh` executable
+> - make `scripts/query.sh` executable (unix only)
 >
 > After the user agrees and the script completes, ask whether they want to call
 > any cold skills now. If they want the interactive picker for moving existing
-> skills into cold storage, tell them to run the repo's `setup.sh` instead.
+> skills into cold storage, tell them to run the repo's `setup.sh` or
+> `setup.ps1` instead.
 <!-- COOL-MY-SKILLS:NOT-INSTALLED:END -->
 
 # Search Cold Skills
@@ -39,14 +47,22 @@ Trigger phrases: `cold <skill-name>`, `cold <query>`, "search your skills", "sea
 When invoked:
 
 1. Extract the query (everything after `cold` / the trigger phrase). It may be an exact skill name or a fuzzy description.
-2. Run the helper script:
+2. Run the helper script.
+   
+   On unix:
 
    ```bash
    ~/.agents/skills/search-cold-skills/scripts/query.sh <query>
    ```
 
+   On Windows (PowerShell 7+):
+
+   ```powershell
+   pwsh "$HOME\.agents\skills\search-cold-skills\scripts\query.ps1" <query>
+   ```
+
    It regenerates `skills-cold/INDEX.md`, searches it (trying hyphenated, stemmed, and partial-word variants of the query), falls back to hot skills if nothing matches, and suggests `--deep` (full SKILL.md body search) as a last resort.
-3. If the script is unavailable, search manually with `rg` under `~/.agents/skills-cold`, preferring frontmatter `name:` and `description:` matches, and try hyphenated/stemmed/partial variants of the query before giving up.
+3. If the script is unavailable, search manually under `~/.agents/skills-cold` with `rg` (unix) or `Select-String` (PowerShell), preferring frontmatter `name:` and `description:` matches, and try hyphenated/stemmed/partial variants of the query before giving up.
 4. If exactly one skill clearly matches, read that cold skill's `SKILL.md` fully.
 5. If several skills match, show the likely matches and ask the user to choose unless one is clearly strongest.
 6. If no cold skill matches but a hot (auto-loaded) skill does, use the hot skill — but explicitly tell the user you fell back to a hot skill.
