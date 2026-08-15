@@ -48,6 +48,7 @@ When invoked:
 
 1. Extract the query (everything after `cold` / the trigger phrase). It may be an exact skill name or a fuzzy description.
 2. Run the helper script.
+   
    On unix:
 
    ```bash
