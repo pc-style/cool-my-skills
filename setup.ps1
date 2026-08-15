@@ -56,8 +56,8 @@ if (-not (Test-Path -LiteralPath $SrcSkill)) {
   }
 }
 
-$HotDir  = $env:HOT_SKILLS_DIR  ?? (Join-Path $HOME '.agents\skills')
-$ColdDir = $env:COLD_SKILLS_DIR ?? (Join-Path $HOME '.agents\skills-cold')
+$HotDir  = if ([string]::IsNullOrEmpty($env:HOT_SKILLS_DIR))  { Join-Path $HOME '.agents\skills' } else { $env:HOT_SKILLS_DIR }
+$ColdDir = if ([string]::IsNullOrEmpty($env:COLD_SKILLS_DIR)) { Join-Path $HOME '.agents\skills-cold' } else { $env:COLD_SKILLS_DIR }
 $DestSkill = Join-Path $HotDir 'search-cold-skills'
 
 function Test-Interactive {
