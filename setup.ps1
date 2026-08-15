@@ -111,7 +111,7 @@ if ($DryRun) {
 # ---- offer to cool some skills now ------------------------------------------
 $candidates = @(
   Get-ChildItem -LiteralPath $HotDir -Directory -ErrorAction SilentlyContinue |
-    Where-Object { Test-Path (Join-Path $_.FullName 'SKILL.md') -and $_.Name -ne 'search-cold-skills' } |
+    Where-Object { (Test-Path (Join-Path $_.FullName 'SKILL.md')) -and $_.Name -ne 'search-cold-skills' } |
     ForEach-Object Name |
     Sort-Object
 )
