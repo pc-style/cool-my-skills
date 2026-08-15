@@ -43,7 +43,7 @@ if (-not (Test-Path -LiteralPath $SrcSkill)) {
     if ($LASTEXITCODE -ne 0) { Write-Error "could not fetch $RepoUrl"; exit 1 }
     $repoDir = Get-ChildItem -LiteralPath $tmp -Directory | Select-Object -First 1
     if (-not $repoDir) { Write-Error "could not fetch $RepoUrl"; exit 1 }
-    & pwsh -File (Join-Path $repoDir.FullName 'setup.ps1') @args
+    & pwsh -File (Join-Path $repoDir.FullName 'setup.ps1') @PSBoundParameters @args
     exit $LASTEXITCODE
   } finally {
     Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
