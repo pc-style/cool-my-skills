@@ -114,6 +114,10 @@ if ($DryRun) {
   try {
     $env:COLD_SKILLS_DIR = $ColdDir
     & pwsh -File (Join-Path $DestSkill 'scripts\install.ps1') | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error 'skill setup failed.'
+      exit 1
+    }
   } finally {
     if ($null -eq $prevColdDir) {
       Remove-Item 'Env:\COLD_SKILLS_DIR' -ErrorAction SilentlyContinue
