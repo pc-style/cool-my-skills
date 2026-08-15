@@ -12,16 +12,16 @@ param(
 $RepoUrl    = $env:COOL_MY_SKILLS_REPO    ?? 'https://github.com/pc-style/cool-my-skills'
 $TarballUrl = $env:COOL_MY_SKILLS_TARBALL ?? 'https://codeload.github.com/pc-style/cool-my-skills/tar.gz/refs/heads/main'
 
-if ($Help) {
-  Write-Host 'usage: pwsh setup.ps1 [-DryRun]'
-  Write-Host '  -DryRun, -n   show the whole flow (banner, prompts, picker) without touching disk'
-  exit 0
-}
-
 if ($args.Count -gt 0) {
   Write-Error "unrecognized argument(s): $($args -join ' ')"
   Write-Host 'usage: pwsh setup.ps1 [-DryRun]'
   exit 2
+}
+
+if ($Help) {
+  Write-Host 'usage: pwsh setup.ps1 [-DryRun]'
+  Write-Host '  -DryRun, -n   show the whole flow (banner, prompts, picker) without touching disk'
+  exit 0
 }
 
 # Where is this script? When piped (irm | iex) $PSScriptRoot is empty.
