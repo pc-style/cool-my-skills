@@ -1,8 +1,7 @@
 # query.ps1 [-Deep] <query...>
 # Searches cold skills by regenerating an index and matching the query.
 # Flow: update index -> query index -> fallback to hot skills -> suggest -Deep.
-# Alias keeps the -Deep/--deep CLI; naming the variable DeepSearch avoids a
-# PowerShell bug where a switch param named Deep breaks Get-ChildItem -Depth.
+# -Deep (switch) and --deep (first arg) both enable full-body search.
 param([Alias('Deep')][switch]$DeepSearch)
 
 $ColdDir = $env:COLD_SKILLS_DIR ?? (Join-Path $HOME '.agents\skills-cold')
