@@ -128,22 +128,17 @@ if (-not (Confirm-Bool 'do you want to cool some skills now?')) {
   exit 0
 }
 
-# pick which ones to move (numbered list, names or indices, space-separated)
+# pick which ones to move (names, space-separated)
 Write-Host 'skills you can cool:'
-for ($i = 0; $i -lt $candidates.Count; $i++) {
-  Write-Host ('  {0,2}. {1}' -f ($i + 1), $candidates[$i])
+foreach ($name in $candidates) {
+  Write-Host "  - $name"
 }
-$reply = Read-Host 'type space-separated names or numbers to cool (blank to skip)'
+$reply = Read-Host 'type space-separated names to cool (blank to skip)'
 
 $selected = [System.Collections.Generic.List[string]]::new()
 foreach ($token in $reply -split ' ') {
   if (-not $token) { continue }
-  if ($token -match '^\d+$') {
-    $idx = [int]$token - 1
-    if ($idx -ge 0 -and $idx -lt $candidates.Count) { $selected.Add($candidates[$idx]) }
-  } elseif ($candidates -contains $token) {
-    $selected.Add($token)
-  }
+  if ($candidates -contains $token) { $selected.Add($token) }
 }
 
 if ($selected.Count -eq 0) {
