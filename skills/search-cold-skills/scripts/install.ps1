@@ -11,6 +11,8 @@
 # For the full interactive experience (moving skills into cold storage), run the
 # repo's setup.ps1 instead.
 
+$ErrorActionPreference = 'Stop'
+
 $SkillDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $SkillMd  = Join-Path $SkillDir 'SKILL.md'
 $ColdDir  = $env:COLD_SKILLS_DIR ?? (Join-Path $HOME '.agents\skills-cold')
