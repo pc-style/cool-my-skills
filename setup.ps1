@@ -110,8 +110,17 @@ if ($DryRun) {
   Copy-Item -LiteralPath (Join-Path $SrcSkill 'scripts\install.ps1') -Destination (Join-Path $DestSkill 'scripts\install.ps1') -Force
 
   Write-Step 'finishing skill setup'
-  $env:COLD_SKILLS_DIR = $ColdDir
-  & pwsh -File (Join-Path $DestSkill 'scripts\install.ps1') | Out-Null
+  $prevColdDir = $env:COLD_SKILLS_DIR
+  try {
+    $env:COLD_SKILLS_DIR = $ColdDir
+    & pwsh -File (Join-Path $DestSkill 'scripts\install.ps1') | Out-Null
+  } finally {
+    if ($null -eq $prevColdDir) {
+      Remove-Item 'Env:\COLD_SKILLS_DIR' -ErrorAction SilentlyContinue
+    } else {
+      $env:COLD_SKILLS_DIR = $prevColdDir
+    }
+  }
 }
 
 # ---- offer to cool some skills now ------------------------------------------
