@@ -30,7 +30,7 @@ description: Use when the user says "cold <skill-name or query>" (e.g. "cold to-
 >
 > - create `~/.agents/skills-cold/`
 > - remove this warning from this copied `SKILL.md`
-> - make `scripts/query.sh` executable (unix; the PowerShell script needs no chmod)
+> - make `scripts/query.sh` executable (unix only)
 >
 > After the user agrees and the script completes, ask whether they want to call
 > any cold skills now. If they want the interactive picker for moving existing
