@@ -51,14 +51,14 @@ foreach ($w in $Query -split ' ') {
 }
 
 # 2. Query the index
-$matches = @(
+$indexMatches = @(
   if (Test-Path -LiteralPath $Index) {
     Select-String -LiteralPath $Index -Pattern $pattern | Where-Object { $_.Line -notmatch '^#' }
   }
 )
-if ($matches.Count -gt 0) {
+if ($indexMatches.Count -gt 0) {
   Write-Host 'cold skill matches:'
-  foreach ($m in $matches) {
+  foreach ($m in $indexMatches) {
     $parts = $m.Line -split '\|', 3
     $name = $parts[0].Trim()
     $rel  = $parts[1].Trim()
