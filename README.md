@@ -42,14 +42,44 @@ bash ~/.agents/skills/search-cold-skills/scripts/install.sh
 
 if an agent sees that warning, it should stop, tell you the skill is only copied (not installed), explain exactly what that script does, and ask before running it. after it finishes, it should ask if you want to call any cold skills now.
 
-## what setup.sh does
+## windows (powershell 7+)
+
+on native windows, use `setup.ps1` instead of `setup.sh`. it mirrors the bash flow: creates `~/.agents/skills-cold/`, installs the hot search skill, and lets you cool some skills. requires powershell 7+ (the `pwsh` command).
+
+full experience, one line:
+
+```powershell
+irm https://raw.githubusercontent.com/pc-style/cool-my-skills/main/setup.ps1 | iex
+```
+
+or clone it:
+
+```powershell
+git clone https://github.com/pc-style/cool-my-skills
+cd cool-my-skills
+pwsh -ExecutionPolicy Bypass -File setup.ps1
+```
+
+dry run (shows the whole flow, touches nothing):
+
+```powershell
+pwsh setup.ps1 -DryRun
+```
+
+if you installed the skill through `npx skills add`, run the windows finisher once (same warning-stripping as `install.sh`):
+
+```powershell
+pwsh "$env:USERPROFILE\.agents\skills\search-cold-skills\scripts\install.ps1"
+```
+
+## what setup.sh / setup.ps1 does
 
 - creates `~/.agents/skills-cold/`
 - installs `search-cold-skills` into `~/.agents/skills/`
 - strips the not-installed warning
 - asks "do you want to cool some skills now?" and lets you pick from your own skills
 
-it's built with [gum](https://github.com/charmbracelet/gum) when you have it, and falls back to plain prompts when you don't.
+it's built with [gum](https://github.com/charmbracelet/gum) when you have it, and falls back to plain prompts when you don't. `setup.ps1` skips gum and uses plain prompts throughout.
 
 ## the idea
 
