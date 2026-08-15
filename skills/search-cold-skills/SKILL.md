@@ -62,10 +62,10 @@ When invoked:
    ```
 
    It regenerates `skills-cold/INDEX.md`, searches it (trying hyphenated, stemmed, and partial-word variants of the query), falls back to hot skills if nothing matches, and suggests `--deep` (full SKILL.md body search) as a last resort.
-4. If the script is unavailable, search manually under `~/.agents/skills-cold` with `rg` (unix) or `Select-String` (PowerShell), preferring frontmatter `name:` and `description:` matches, and try hyphenated/stemmed/partial variants of the query before giving up.
-5. If exactly one skill clearly matches, read that cold skill's `SKILL.md` fully.
-6. If several skills match, show the likely matches and ask the user to choose unless one is clearly strongest.
-7. If no cold skill matches but a hot (auto-loaded) skill does, use the hot skill — but explicitly tell the user you fell back to a hot skill.
-8. Treat the matched cold skill directory as the skill root. Resolve `scripts/`, `references/`, `resources/`, and other relative paths under that cold skill directory.
-9. Follow the cold skill's instructions manually for this request.
-10. Respect compatibility, environment, MCP, and tool notes in the cold skill frontmatter/body, but remember your agent will not automatically apply cold skill metadata.
+3. If the script is unavailable, search manually under `~/.agents/skills-cold` with `rg` (unix) or `Select-String` (PowerShell), preferring frontmatter `name:` and `description:` matches, and try hyphenated/stemmed/partial variants of the query before giving up.
+4. If exactly one skill clearly matches, read that cold skill's `SKILL.md` fully.
+5. If several skills match, show the likely matches and ask the user to choose unless one is clearly strongest.
+6. If no cold skill matches but a hot (auto-loaded) skill does, use the hot skill — but explicitly tell the user you fell back to a hot skill.
+7. Treat the matched cold skill directory as the skill root. Resolve `scripts/`, `references/`, `resources/`, and other relative paths under that cold skill directory.
+8. Follow the cold skill's instructions manually for this request.
+9. Respect compatibility, environment, MCP, and tool notes in the cold skill frontmatter/body, but remember your agent will not automatically apply cold skill metadata.
