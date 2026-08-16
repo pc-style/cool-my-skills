@@ -10,7 +10,9 @@ param(
 )
 
 $RepoUrl    = $env:COOL_MY_SKILLS_REPO    ?? 'https://github.com/pc-style/cool-my-skills'
-$TarballUrl = $env:COOL_MY_SKILLS_TARBALL ?? 'https://codeload.github.com/pc-style/cool-my-skills/tar.gz/refs/heads/main'
+$DefaultRef = 'a9ae1f162df7730284cc873d9664aa1e225aee8b'
+$InstallRef = $env:COOL_MY_SKILLS_REF ?? $DefaultRef
+$TarballUrl = $env:COOL_MY_SKILLS_TARBALL ?? "https://codeload.github.com/pc-style/cool-my-skills/tar.gz/$InstallRef"
 
 if ($args.Count -gt 0) {
   Write-Error "unrecognized argument(s): $($args -join ' ')"

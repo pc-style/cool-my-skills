@@ -4,7 +4,9 @@
 set -euo pipefail
 
 REPO_URL="${COOL_MY_SKILLS_REPO:-https://github.com/pc-style/cool-my-skills}"
-TARBALL_URL="${COOL_MY_SKILLS_TARBALL:-https://codeload.github.com/pc-style/cool-my-skills/tar.gz/refs/heads/main}"
+DEFAULT_REF="a9ae1f162df7730284cc873d9664aa1e225aee8b"
+INSTALL_REF="${COOL_MY_SKILLS_REF:-$DEFAULT_REF}"
+TARBALL_URL="${COOL_MY_SKILLS_TARBALL:-https://codeload.github.com/pc-style/cool-my-skills/tar.gz/$INSTALL_REF}"
 
 has() { command -v "$1" >/dev/null 2>&1; }
 
